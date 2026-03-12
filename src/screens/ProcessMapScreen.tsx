@@ -1,7 +1,8 @@
 import {
   DndContext,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -30,7 +31,17 @@ export const ProcessMapScreen = ({
   onMeaningfulInteraction,
 }: ProcessMapScreenProps) => {
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 120,
+        tolerance: 10,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -65,7 +76,10 @@ export const ProcessMapScreen = ({
       <div className="process-layout">
         <div className="support-card">
           <h2>How to complete this step</h2>
-          <p>Drag each step into place. Keyboard users can focus a row and use the arrow keys to move it.</p>
+          <p>
+            Drag each step into place. Touch users can press and drag a row, and keyboard users
+            can focus a row and use the arrow keys to move it.
+          </p>
           <p className="support-stat">Accuracy is based on exact step placement across all eight items.</p>
         </div>
 

@@ -55,10 +55,12 @@ test.describe('BA assessment flow', () => {
   test('supports the intake flow on a mobile viewport', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'mobile-chromium', 'Mobile assertion runs in the mobile project.')
 
-    await page.goto('/?e2e=1')
-    await expect(page.getByText('Business Analyst Cognitive Readiness App')).toBeVisible()
-    await page.getByRole('button', { name: 'Next: Capture requirements' }).click()
-    await expect(page.getByRole('button', { name: 'Review source material' })).toBeVisible()
+    await completeIntake(page)
+
+    const handles = page.locator('.process-handle')
+    await expect(page.getByText(/touch users can press and drag a row/i)).toBeVisible()
+    await expect(handles.nth(0)).toContainText('System updates the employee’s remaining PTO balance.')
+    await expect(handles.nth(0)).toHaveCSS('touch-action', 'none')
   })
 
   test('clears the in-memory session on refresh', async ({ page }, testInfo) => {
