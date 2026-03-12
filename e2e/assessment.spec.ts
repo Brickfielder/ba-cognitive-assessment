@@ -13,20 +13,25 @@ const completeIntake = async (page: Page) => {
   await page.getByRole('button', { name: 'Continue to the process map' }).click()
 }
 
+const reorderProcessMapByKeyboard = async (page: Page) => {
+  for (let moveCount = 7; moveCount >= 1; moveCount -= 1) {
+    await page.locator('.process-handle').nth(7).focus()
+    await page.keyboard.press('Space')
+
+    for (let step = 0; step < moveCount; step += 1) {
+      await page.keyboard.press('ArrowUp')
+    }
+
+    await page.keyboard.press('Space')
+  }
+}
+
 test.describe('BA assessment flow', () => {
   test('completes the assessment and shows clinician metrics', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'chromium', 'Full flow runs once in desktop Chromium.')
 
     await completeIntake(page)
-
-    const handles = page.locator('.process-handle')
-    await handles.nth(7).dragTo(handles.nth(0))
-    await handles.nth(7).dragTo(handles.nth(1))
-    await handles.nth(7).dragTo(handles.nth(2))
-    await handles.nth(7).dragTo(handles.nth(3))
-    await handles.nth(7).dragTo(handles.nth(4))
-    await handles.nth(7).dragTo(handles.nth(5))
-    await handles.nth(7).dragTo(handles.nth(6))
+    await reorderProcessMapByKeyboard(page)
     await page.getByRole('button', { name: 'Save process map' }).click()
 
     await page.getByRole('button', { name: 'Open drafting workspace' }).click()
